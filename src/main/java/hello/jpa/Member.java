@@ -12,9 +12,10 @@ public class Member {
     @Id
     private Long id;
 
-//    @Column(name = "username")
+    @Column(name = "username", unique = true, length = 10)
     private String name;
-    
+
+
     
 
     public Member(Long id, String name) {

@@ -21,7 +21,13 @@
 
             <!--이 사이즈만큼 모아서 db에 한방에 쿼리보냄-->
             <property name="hibernate.jdbc.batch_size" value="10"/>
-            <!--<property name="hibernate.hbm2ddl.auto" value="create" />-->
+
+            <!--db 스키마 자동생성-->
+            <property name="hibernate.hbm2ddl.auto" value="create" />
+<!--            <property name="hibernate.hbm2ddl.auto" value="create-drop" />-->
+<!--            <property name="hibernate.hbm2ddl.auto" value="update" />-->
+<!--            <property name="hibernate.hbm2ddl.auto" value="validate" />-->
+<!--            <property name="hibernate.hbm2ddl.auto" value="none" />-->
         </properties>
     </persistence-unit>
 </persistence>
