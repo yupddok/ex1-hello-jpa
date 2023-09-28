@@ -5,10 +5,32 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
+
 @Entity
 //@Table(uniqueConstraints = )
+@TableGenerator(
+        name = "MEMBER_SEQ_GENERATOR",
+        table = "MY_SEQUENCES",
+        pkColumnValue = "MEMBER_SEQ",
+        initialValue = 100,
+        allocationSize = 1
+)
+//@SequenceGenerator(
+//        name = "MEMBER_SEQ_GENERATOR",
+//        sequenceName = "MEMBER_SEQ", //매핑할 DB 시퀀스 이름
+//        initialValue = 1, allocationSize = 1
+//)
 public class Member {
+
     @Id
+//    @GeneratedValue(strategy = GenerationType.AUTO) // 자동생성 -db 방언에 맞게
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동생성 -기본키생성을 db에게 위임
+    // 키를  null로  셋팅해야함
+    // -> db에 들어가야 key를 알 수 있다.
+    // 그러면 영속 컨텍스트 안에서는 ? persist() 호출 시점에 db에 쿼리가 날라감
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+//    @GeneratedValue(strategy = GenerationType.TABLE, // TABLE 전략 (잘 안씀)
+//            generator = "MEMBER_SEQ_GENERATOR") // 자동생성 - 시퀀스 오브젝트 생성
     private Long id;
     @Column(name = "name",
             insertable = true, updatable = false, // 컬럼 수정시 db 반영 ?
@@ -34,7 +56,7 @@ public class Member {
 
     @Lob // 속성 X, 매핑하는 필드 타입이 문자면 CLOB, 나머지는 BLOB
     private String description;
-    
+
     @Transient // db와 관련없는 컬럼 (메모리상에서만 사용)
     private int temp;
 
