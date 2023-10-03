@@ -16,7 +16,7 @@ public class Member {
 //    private Long teamId;
 
     @ManyToOne // Member : n , Team : 1
-    @JoinColumn(name = "TEAM_ID")
+    @JoinColumn(name = "TEAM_ID") // owner (외래키가 있는 곳)
     private Team team;
 
     public Long getId() {
