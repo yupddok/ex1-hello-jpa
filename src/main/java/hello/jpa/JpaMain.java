@@ -4,7 +4,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import java.util.List;
 
 public class JpaMain {
     public static void main(String[] args) {
@@ -24,13 +23,40 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Member member = new Member();
-//            member.setId(4L);
-            member.setUsername("C");
-            member.setRoleType(RoleType.GUEST);
-            em.persist(member);
+//            Member_bk member = new Member_bk();
+////            member.setId(4L);
+//            member.setUsername("C");
+//            member.setRoleType(RoleType.GUEST);
+//            em.persist(member);
 
-            // 커밋하는 순간 데이터베이스에 INSERT SQL을 보낸다.
+            // 저장
+            Team team = new Team();
+            team.setName("TeamA");
+            em.persist(team);
+
+            Member member = new Member();
+            member.setName("member1");
+//            member.setTeamId(team.getId());
+            member.setTeam(team);
+            em.persist(member);
+            
+            // 영속성 컨텍스트 초기화
+            em.flush();
+            em.clear();
+            
+            Member findMember = em.find(Member.class, member.getId());
+
+//            Long findTeamId = findMember.getTeamId();
+//            Team findTeam = em.find(Team.class, findTeamId);
+            Team findTeam = findMember.getTeam();
+
+            System.out.println("findTeam = " + findTeam.getName());
+
+            // 팀수정 - fk update
+            Team newTeam = em.find(Team.class, 100L);
+            findMember.setTeam(newTeam);
+//
+//            // 커밋하는 순간 데이터베이스에 INSERT SQL을 보낸다.
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
