@@ -6,7 +6,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.util.List;
 
-public class JpaMain {
+public class JpaMain_bk2 {
     public static void main(String[] args) {
         // persistenceUnitName
         // /src/main/resources/META-INF/persistence.xml
@@ -24,41 +24,44 @@ public class JpaMain {
         tx.begin();
 
         try {
+//            Member_bk member = new Member_bk();
+////            member.setId(4L);
+//            member.setUsername("C");
+//            member.setRoleType(RoleType.GUEST);
+//            em.persist(member);
+
+            // 저장
             Team team = new Team();
             team.setName("TeamA");
             em.persist(team);
 
             Member member = new Member();
             member.setName("member1");
-            // 양방향 매핑시 연관관계의 주인에 값을 입력해야 한다.
-//            member.changeTeam(team);   //**
+//            member.setTeamId(team.getId());
+            member.changeTeam(team);
             em.persist(member);
-
-            team.addMember(member);
-
-            // 연관관계 주인이 아니면 값을 입력해야하나 말아야하나 ?
-            // db 관점에서는 안써됨
-            // 순수한 객체 관계를 고려하면 항상 양쪽 다 값을 입력해야한다.
-            // test case를 위해서도 (jpa 없이) 양쪽 다 값을 입력해야한다.
-            // 순수 객체 상태를 고려해서 항상 양쪽에 값을 설정하자
-            // -> 실수 방지를 위해 연관관계 편의 메소드를 생성하자
-//            team.getMembers().add(member);   //**
             
-//            em.flush();
-//            em.clear();
-
-            Team findTeam = em.find(Team.class, team.getId());
-
-            // em.flush(), em.clear() 후에는 상관없으나 1차 캐시에서 가져올 경우
-            // team.getMembers().add(member); 이 코드가 없으면
-            // 에러남
-            List<Member> members = findTeam.getMembers();
-            for (Member m : members) {
-                System.out.println("m.getName() = " + m.getName());
+            // 영속성 컨텍스트 초기화
+            em.flush();
+            em.clear();
+            
+            Member findMember = em.find(Member.class, member.getId());
+            // 양방향 매핑
+            List<Member> members = findMember.getTeam().getMembers();
+            for (Member member1 : members) {
+                System.out.println("member1 = " + member1.getName());
             }
 
+//            Long findTeamId = findMember.getTeamId();
+//            Team findTeam = em.find(Team.class, findTeamId);
+            Team findTeam = findMember.getTeam();
 
+            System.out.println("findTeam = " + findTeam.getName());
 
+            // 팀수정 - fk update
+            Team newTeam = em.find(Team.class, 100L);
+            findMember.changeTeam(newTeam);
+//
 //            // 커밋하는 순간 데이터베이스에 INSERT SQL을 보낸다.
             tx.commit();
         } catch (Exception e) {
